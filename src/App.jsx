@@ -6,9 +6,12 @@ function App() {
 
   const [searchInput,setSearchInput] = useState('');
   const [results,setResults] = useState([]);
+  const [showResults,setShowResults] = useState(false);
 
 
   const fetchData = async() => {
+    const timeTakenForEachApiCallInMs = searchInput;
+    console.log(`API Call ${timeTakenForEachApiCallInMs}`);
     const resData = await fetch(
       "https://dummyjson.com/recipes/search?q=" + searchInput
     );
@@ -16,9 +19,13 @@ function App() {
     const jsonData = await resData.json();
     setResults(jsonData?.recipes);
   }
-
+//debouncing to reduce api calls.
   useEffect (()=>{
-    fetchData();
+    const delayFetchData = setTimeout(fetchData,350);
+    return () =>{
+      clearTimeout(delayFetchData);
+    }
+    
   },[searchInput])
 
   return (
@@ -29,16 +36,19 @@ function App() {
         type="text"
         className='searchInput'
         value={searchInput}
-        onChange={(e) => setSearchInput(e.target.value)} />
+        onChange={(e) => setSearchInput(e.target.value)} 
+        onFocus={() => setShowResults(true)}
+        onBlur={() => setShowResults(false)}
+        />
       </div>
-      <div className="resultsContainer">
+     { showResults && <div className="resultsContainer">
         {results &&
         results.map((recipe) => (
           <span
           className='result' key= {recipe.id}
           >{recipe.name}</span>
         ))}
-      </div>
+      </div>}
     </>
   );
 }

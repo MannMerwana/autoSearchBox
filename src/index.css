@@ -13,6 +13,10 @@ html,body{
   color:white;
 
 }
+h1{
+ color: yellow;
+ font-family: 'Josefin Sans';
+}
 .searchInput{
   width: 500px;
   padding: 5px;
